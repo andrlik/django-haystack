@@ -261,7 +261,7 @@ class Elasticsearch5SearchBackendTestCase(TestCase):
         self.ui.build(indexes=[self.smmi])
         connections["elasticsearch"]._index = self.ui
         self.sb = connections["elasticsearch"].get_backend()
-
+        self.maxDiff = None
         # Force the backend to rebuild the mapping each time.
         self.sb.existing_mapping = {}
         self.sb.setup()
@@ -617,6 +617,7 @@ class Elasticsearch5SearchBackendTestCase(TestCase):
         )
 
     def test_build_schema(self):
+       
         old_ui = connections["elasticsearch"].get_unified_index()
 
         (content_field_name, mapping) = self.sb.build_schema(old_ui.all_searchfields())
@@ -626,19 +627,19 @@ class Elasticsearch5SearchBackendTestCase(TestCase):
             mapping,
             {
                 "django_id": {
+		    "type": "keyword",
                     "index": "not_analyzed",
-                    "type": "string",
                     "include_in_all": False,
                 },
                 "django_ct": {
+                    "type": "keyword",
                     "index": "not_analyzed",
-                    "type": "string",
                     "include_in_all": False,
                 },
-                "text": {"type": "string", "analyzer": "snowball"},
+                "text": {"type": "text", "analyzer": "snowball"},
                 "pub_date": {"type": "date"},
-                "name": {"type": "string", "analyzer": "snowball"},
-                "name_exact": {"index": "not_analyzed", "type": "string"},
+                "name": {"type": "text", "analyzer": "snowball"},
+                "name_exact": {"index": "not_analyzed", "type": "keyword"},
             },
         )
 
@@ -651,28 +652,28 @@ class Elasticsearch5SearchBackendTestCase(TestCase):
             mapping,
             {
                 "django_id": {
+                    "type": "keyword",
                     "index": "not_analyzed",
-                    "type": "string",
                     "include_in_all": False,
                 },
                 "django_ct": {
+                    "type": "keyword",
                     "index": "not_analyzed",
-                    "type": "string",
                     "include_in_all": False,
                 },
-                "name": {"type": "string", "analyzer": "snowball"},
+                "name": {"type": "keyword", "analyzer": "snowball"},
                 "is_active_exact": {"type": "boolean"},
                 "created": {"type": "date"},
                 "post_count": {"type": "long"},
                 "created_exact": {"type": "date"},
-                "sites_exact": {"index": "not_analyzed", "type": "string"},
+                "sites_exact": {"index": "not_analyzed", "type": "keyword"},
                 "is_active": {"type": "boolean"},
-                "sites": {"type": "string", "analyzer": "snowball"},
+                "sites": {"type": "text", "analyzer": "snowball"},
                 "post_count_i": {"type": "long"},
                 "average_rating": {"type": "float"},
-                "text": {"type": "string", "analyzer": "snowball"},
+                "text": {"type": "text", "analyzer": "snowball"},
                 "pub_date_exact": {"type": "date"},
-                "name_exact": {"index": "not_analyzed", "type": "string"},
+                "name_exact": {"index": "not_analyzed", "type": "keyword"},
                 "pub_date": {"type": "date"},
                 "average_rating_exact": {"type": "float"},
             },
@@ -1429,19 +1430,19 @@ class LiveElasticsearch5AutocompleteTestCase(TestCase):
             {
                 "django_id": {
                     "index": "not_analyzed",
-                    "type": "string",
+                    "type": "text",
                     "include_in_all": False,
                 },
                 "django_ct": {
                     "index": "not_analyzed",
-                    "type": "string",
+                    "type": "text",
                     "include_in_all": False,
                 },
-                "name_auto": {"type": "string", "analyzer": "edgengram_analyzer"},
-                "text": {"type": "string", "analyzer": "snowball"},
+                "name_auto": {"type": "text", "analyzer": "edgengram_analyzer"},
+                "text": {"type": "text", "analyzer": "snowball"},
                 "pub_date": {"type": "date"},
-                "name": {"type": "string", "analyzer": "snowball"},
-                "text_auto": {"type": "string", "analyzer": "edgengram_analyzer"},
+                "name": {"type": "text", "analyzer": "snowball"},
+                "text_auto": {"type": "text", "analyzer": "edgengram_analyzer"},
             },
         )
 
