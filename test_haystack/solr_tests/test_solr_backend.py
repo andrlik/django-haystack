@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import datetime
 import logging as std_logging
 import os
 import unittest
 from decimal import Decimal
+from unittest.mock import patch
 
 import pysolr
 from django.conf import settings
-from django.contrib.gis.geos import Point
 from django.test import TestCase
 from django.test.utils import override_settings
-from mock import patch
 from pkg_resources import parse_version
 
 from haystack import connections, indexes, reset_search_queries
@@ -561,6 +558,8 @@ class SolrSearchBackendTestCase(TestCase):
         )
 
     def test_spatial_search_parameters(self):
+        from django.contrib.gis.geos import Point
+
         p1 = Point(1.23, 4.56)
         kwargs = self.sb.build_search_kwargs(
             "*:*",
